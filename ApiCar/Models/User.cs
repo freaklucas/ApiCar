@@ -10,10 +10,9 @@ namespace ApiCar.Models;
 public class User
 {
     [Key]
-    [JsonIgnore]
     public int Id { get; set; }
     [Required]
-    public string? Name { get;}
+    public string? Name { get; set; }
     [Required]
     public string? UserName { get; set; }
     [Required]

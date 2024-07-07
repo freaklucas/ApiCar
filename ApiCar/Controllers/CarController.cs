@@ -23,7 +23,7 @@ public class CarController : ControllerBase
         return await _context.Cars.ToListAsync();
     }
 
-    [HttpGet("BuscarPorMarca/{make:string}")]
+    [HttpGet("BuscarPorMarca/{make}")]
     public async Task<ActionResult<IEnumerable<Car>>> GetCarByMake(string make)
     {
         return await _context.Cars.Where(c => c.Make == make).ToListAsync();

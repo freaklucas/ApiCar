@@ -12,7 +12,6 @@ namespace ApiCar.Models;
 public class Car
 {
     [Key]
-    [JsonIgnore]
     public int Id { get; set; }
     [Required]
     public string? Make { get; set; }
@@ -22,7 +21,7 @@ public class Car
     public TransmissionType Transmission { get; set; }
     [Required]
     [Range(1800, 2025, ErrorMessage = "Intervalo inválido de ano.")]
-    public DateTime Year { get; set; }
+    public int Year { get; set; }
     [Required]
     [Range(500, double.MaxValue, ErrorMessage = "Preço precisa ser um valor positivo.")]
     public decimal Price { get; set; }
