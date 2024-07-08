@@ -54,6 +54,16 @@ public class UserController : ControllerBase
         {
             return BadRequest("Pessoa nulla.");
         }
+
+        bool userExists = _context.Users.Any(u =>
+            u.UserName == user.UserName &&
+            u.Email == user.Email
+        );
+
+        if (userExists) {
+            return BadRequest("Usuário já existente :)");
+        }
+
         _context.Users.Add(user);
         _context.SaveChanges();
 

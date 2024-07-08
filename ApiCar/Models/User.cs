@@ -16,6 +16,7 @@ public class User
     [Required]
     public string? UserName { get; set; }
     [Required]
+    [EmailAddress]
     public string? Email { get; set; }
 
     public ICollection<Car>? Cars { get; set; } = new Collection<Car>();
