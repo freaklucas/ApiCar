@@ -1,9 +1,14 @@
 using ApiCar.Data;
 using ApiCar.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiCar.Controllers;
+
+/// <summary>
+/// TODO: 1. Filtro por email
+/// </summary>
 
 [Route("api/[controller]")]
 [ApiController]
@@ -17,9 +22,15 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<User>> Get()
+    public ActionResult<IEnumerable<User>> Get(int pageNumber = 1, int pageSize = 10)
     {
-        var users = _context.Users.Include(c => c.Cars).ToList();
+        var users = _context.Users
+            .Include(c => c.Cars)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .AsNoTracking()
+            .ToList();
+
         if (users is null) return BadRequest("Usuários não encontrados.");
 
         return Ok(users);
@@ -40,7 +51,9 @@ public class UserController : ControllerBase
     {
         var users = _context.Users.Include(u => u.Cars).ToList();
 
-        var findName = users.Where(u => u.Name != null && u.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
+        var findName = users
+            .Where(u => u.Name != null && u.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+            .ToList();
             
         if (findName.Any() == null) return BadRequest("Nome não encontrado.");
 
@@ -78,6 +91,24 @@ public class UserController : ControllerBase
         if (id != user.Id) return NotFound("Id nulo.");
 
         _context.Entry(user).State = EntityState.Modified;
+        _context.SaveChanges();
+
+        return Ok(user);
+    }
+
+    [HttpPatch("{id:int}")]
+    public ActionResult<User> Patch(int id, JsonPatchDocument<User> patchDocument)
+    {
+        if (patchDocument is null) return BadRequest();
+        
+        var user = _context.Users.FirstOrDefault(u => u.Id == id);
+
+        if (user is null) return BadRequest("Usuario não encontrado.");
+
+        patchDocument.ApplyTo(user, ModelState);
+
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
         _context.SaveChanges();
 
         return Ok(user);

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using ApiCar.Enums;
+using ApiCar.Notifications;
 
 namespace ApiCar.Models;
 
@@ -9,11 +10,10 @@ namespace ApiCar.Models;
 /// Prop navegation
 /// </summary>
 
-public class Car
+public class Car : Notifiable
 {
     [Key]
     public int Id { get; set; }
-    [Required]
     public string? Make { get; set; }
     [Required]
     public string? Model { get; set; }
@@ -23,9 +23,20 @@ public class Car
     [Range(1800, 2025, ErrorMessage = "Intervalo inválido de ano.")]
     public int Year { get; set; }
     [Required]
-    [Range(500, double.MaxValue, ErrorMessage = "Preço precisa ser um valor positivo.")]
     public decimal Price { get; set; }
     [Required]
     public int UserId { get; set; }
     public virtual User? Owner { get; set; }
+    
+    [NotMapped]
+    public new IReadOnlyCollection<Notification> Notifications => base.Notifications;
+
+    public void Validate()
+    {
+        if (string.IsNullOrEmpty(Make)) 
+            AddNotification(nameof(Make), "A marca é obrigatório.");
+
+        if (Price < 100 || Price < 0) 
+            AddNotification(nameof(Price), "Não tem como um carro custar tão barato.");
+    }
 }

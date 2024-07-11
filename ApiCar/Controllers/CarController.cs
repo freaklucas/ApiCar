@@ -20,7 +20,10 @@ public class CarController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Car>>> GetCars()
     {
-        return await _context.Cars.ToListAsync();
+        return await _context
+            .Cars
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     [HttpGet("BuscarPorMarca/{make}")]
@@ -42,6 +45,12 @@ public class CarController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Car>> PostCar(Car car)
     {
+        car.Validate();
+        if(!car.IsValid)
+        {
+            return BadRequest(car.Notifications);
+        }
+
         _context.Cars.Add(car);
         await _context.SaveChangesAsync();
 

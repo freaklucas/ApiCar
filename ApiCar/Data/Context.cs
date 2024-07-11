@@ -1,4 +1,5 @@
 using ApiCar.Models;
+using ApiCar.Notifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiCar.Data;
@@ -20,7 +21,11 @@ public class Context : DbContext
             .WithMany(u => u.Cars)
             .HasForeignKey(u => u.UserId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
+        modelBuilder.Entity<Car>().Property(c => c.Price).HasColumnType("decimal(18,2)");
+
+        modelBuilder.Ignore<Notification>();
+
         base.OnModelCreating(modelBuilder);
     }
 }
