@@ -77,7 +77,7 @@ public class CarController : ControllerBase
         if (car == null) return NotFound("Carro não encontrado.");
 
         _context.Cars.Remove(car);
-        _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
         return Accepted(car);
     }
