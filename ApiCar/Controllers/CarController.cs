@@ -29,7 +29,11 @@ public class CarController : ControllerBase
     [HttpGet("BuscarPorMarca/{make}")]
     public async Task<ActionResult<IEnumerable<Car>>> GetCarByMake(string make)
     {
-        return await _context.Cars.Where(c => c.Make == make).ToListAsync();
+        var searchMake = await _context.Cars.Where(c => c.Make == make).ToListAsync();
+
+        if (searchMake is null) return BadRequest("Usuário não encontrado.");
+
+        return Ok(searchMake);
     }
 
     [HttpGet("{id:int}")]
@@ -40,6 +44,37 @@ public class CarController : ControllerBase
 
 
         return Ok(car);
+    }
+
+    [HttpGet("BuscarPorFiltros")]
+    public async Task<ActionResult<IEnumerable<Car>>> GetCarsByFilters
+        (decimal? minPrice, decimal? maxPrice, int? minYear, int? maxYear)
+    {
+        var query = _context.Cars.AsQueryable();
+        if(minPrice.HasValue)
+        {
+            query = query.Where(p => p.Price >= minPrice.Value);
+        }
+
+        if(maxPrice.HasValue)
+        {
+            query = query.Where(p => p.Price <= maxPrice.Value);
+        }
+
+        if (minYear.HasValue)
+        {
+            query = query.Where(p => p.Year >= minYear.Value);
+        }
+
+        if (maxYear.HasValue) { 
+            query = query.Where(p=> p.Year <= maxYear.Value);
+        }
+
+        var cars = await query.ToListAsync();
+
+        if(!cars.Any()) return BadRequest("Dados faltantes.");
+
+        return Ok(cars);
     }
     
     [HttpPost]

@@ -31,7 +31,7 @@ public class UserController : ControllerBase
             .AsNoTracking()
             .ToList();
 
-        if (users is null) return BadRequest("Usu·rios n„o encontrados.");
+        if (users is null) return BadRequest("Usu√°rios n√£o encontrados.");
 
         return Ok(users);
     }
@@ -41,7 +41,7 @@ public class UserController : ControllerBase
     {
         var searchUser = _context.Users.FirstOrDefault(u => u.Id == id);
         
-        if(searchUser == null) return BadRequest("Usu·rio por id n„o encontrado.");
+        if(searchUser == null) return BadRequest("Usu√°rio por id n√£o encontrado.");
         
         return Ok(searchUser);
     }
@@ -55,7 +55,7 @@ public class UserController : ControllerBase
             .Where(u => u.Name != null && u.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
             .ToList();
             
-        if (findName.Any() == null) return BadRequest("Nome n„o encontrado.");
+        if (findName.Any() == null) return BadRequest("Nome n√£o encontrado.");
 
         return Ok(findName);
     }
@@ -74,7 +74,7 @@ public class UserController : ControllerBase
         );
 
         if (userExists) {
-            return BadRequest("Usu·rio j· existente :)");
+            return BadRequest("Usu√°rio j√° existente :)");
         }
 
         _context.Users.Add(user);
@@ -103,7 +103,7 @@ public class UserController : ControllerBase
         
         var user = _context.Users.FirstOrDefault(u => u.Id == id);
 
-        if (user is null) return BadRequest("Usuario n„o encontrado.");
+        if (user is null) return BadRequest("Usuario n√£o encontrado.");
 
         patchDocument.ApplyTo(user, ModelState);
 
@@ -119,11 +119,11 @@ public class UserController : ControllerBase
     {
         var findUser = _context.Users.Find(id);
 
-        if (findUser is null) return BadRequest("OperaÁ„o n„o pode ser realizada.");
+        if (findUser is null) return BadRequest("Opera√ß√£o n√£o pode ser realizada.");
 
         _context.Users.Remove(findUser);
         _context.SaveChanges();
 
-        return Ok($"Usu·rio {findUser.Name} deletado.");
+        return Ok($"Usu√°rio {findUser.Name} deletado.");
     }
 }
