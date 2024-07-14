@@ -27,6 +27,8 @@ public class Context : DbContext
         modelBuilder.Entity<Car>().Property(c => c.Price).HasColumnType("decimal(18,2)");
 
         modelBuilder.Ignore<Notification>();
+        modelBuilder.Entity<MaintenanceRecord>()
+            .Ignore(p => p.Car);
 
         base.OnModelCreating(modelBuilder);
     }
