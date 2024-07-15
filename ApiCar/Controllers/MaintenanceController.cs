@@ -38,4 +38,44 @@ public class MaintenanceController(Context context) : ControllerBase
         return CreatedAtAction(nameof(GetMaintenanceRecords), 
             new { carId = maintenanceRecord.CarId }, maintenanceRecord);
     }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> PutMaintenanceRecord(int id, MaintenanceRecord maintenanceRecord)
+    {
+        if(id != maintenanceRecord.Id) return BadRequest("Ids não correspondem.");
+        if(maintenanceRecord is null) return BadRequest("Não foi possivel atualizar manutenção do veículo.");
+
+        var existingMaintenanceRecord = await _context.MaintenanceRecords.FindAsync(id);
+        if (existingMaintenanceRecord is null) return BadRequest("Não foi possivel atualizar.");
+        
+        existingMaintenanceRecord.CarId = maintenanceRecord.CarId;
+        existingMaintenanceRecord.Cost = maintenanceRecord.Cost;
+        existingMaintenanceRecord.Date = existingMaintenanceRecord.Date;
+        existingMaintenanceRecord.Description = existingMaintenanceRecord.Description;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> DeleteMaintenanceRecord(int id)
+    {
+        if(id <= 0) return BadRequest("Registro de  manutenção não foi encontrada.");
+        var maintenanceRecord = await _context.MaintenanceRecords.FindAsync(id);
+        if (maintenanceRecord is null) return BadRequest("Registro de  manutenção não foi encontrada.");
+
+        _context.MaintenanceRecords.Remove(maintenanceRecord);
+        await _context.SaveChangesAsync();
+
+        return Accepted(maintenanceRecord);
+    }
+    
 }
