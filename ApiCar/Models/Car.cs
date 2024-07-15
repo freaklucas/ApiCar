@@ -28,6 +28,8 @@ public class Car : Notifiable
     public int UserId { get; set; }
     public virtual User? Owner { get; set; }
     
+    public virtual ICollection<MaintenanceRecord>? MaintenanceRecords  { get; set; } 
+    
     [NotMapped]
     public new IReadOnlyCollection<Notification> Notifications => base.Notifications;
 

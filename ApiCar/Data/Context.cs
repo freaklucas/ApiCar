@@ -24,9 +24,18 @@ public class Context : DbContext
             .HasForeignKey(u => u.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Car>().Property(c => c.Price).HasColumnType("decimal(18,2)");
+        modelBuilder.Entity<Car>()
+            .HasMany(m => m.MaintenanceRecords)
+            .WithOne(c => c.Car)
+            .HasForeignKey(m => m.CarId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Car>()
+            .Property(c => c.Price)
+            .HasColumnType("decimal(18,2)");
 
         modelBuilder.Ignore<Notification>();
+        
         modelBuilder.Entity<MaintenanceRecord>()
             .Ignore(p => p.Car);
 
