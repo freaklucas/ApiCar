@@ -25,6 +25,20 @@ public class MaintenanceController(Context context) : ControllerBase
         return Ok(findMaintenance);
     }
     
+    [HttpGet("/DataManutencao/")]
+    public async Task<ActionResult<IEnumerable<MaintenanceRecord>>> GetDateMaintenance(DateTime startDate, DateTime endDate)
+    {
+        var findMaintenance = await _context
+            .MaintenanceRecords
+            .Where(m => m.Date >= startDate && m.Date <= endDate)
+            .AsTracking()
+            .ToListAsync();
+        
+        if (!findMaintenance.Any()) return BadRequest("Não foi encontrado data de manutenção.");
+        
+        return Ok(findMaintenance);
+    }
+    
     
     [HttpPost]
     public async Task<ActionResult<MaintenanceRecord>> 
