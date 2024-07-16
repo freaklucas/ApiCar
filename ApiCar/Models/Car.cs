@@ -1,44 +1,40 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 using ApiCar.Enums;
 using ApiCar.Notifications;
 
 namespace ApiCar.Models;
 
 /// <summary>
-/// Prop navegation
+///     Prop navegation
 /// </summary>
-
 public class Car : Notifiable
 {
-    [Key]
-    public int Id { get; set; }
+    [Key] public int Id { get; set; }
     public string? Make { get; set; }
-    [Required]
-    public string? Model { get; set; }
-    [Required]
-    public TransmissionType Transmission { get; set; }
+    [Required] public string? Model { get; set; }
+    [Required] public TransmissionType Transmission { get; set; }
+
     [Required]
     [Range(1800, 2025, ErrorMessage = "Intervalo inválido de ano.")]
     public int Year { get; set; }
-    [Required]
-    public decimal Price { get; set; }
-    [Required]
-    public int UserId { get; set; }
+
+    [Required] public decimal Price { get; set; }
+    [Required] public int UserId { get; set; }
     public virtual User? Owner { get; set; }
-    
-    public virtual ICollection<MaintenanceRecord>? MaintenanceRecords  { get; set; } 
-    
-    [NotMapped]
-    public new IReadOnlyCollection<Notification> Notifications => base.Notifications;
+
+    public virtual ICollection<MaintenanceRecord>? MaintenanceRecords { get; set; }
+
+    public virtual ICollection<InsurancePolicy>? InsurancePolicies { get; set; }
+
+    [NotMapped] public new IReadOnlyCollection<Notification> Notifications => base.Notifications;
 
     public void Validate()
     {
-        if (string.IsNullOrEmpty(Make)) 
+        if (string.IsNullOrEmpty(Make))
             AddNotification(nameof(Make), "A marca é obrigatório.");
 
-        if (Price < 100 || Price < 0) 
+        if (Price < 100 || Price < 0)
             AddNotification(nameof(Price), "Não tem como um carro custar tão barato.");
     }
 }

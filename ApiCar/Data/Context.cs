@@ -8,14 +8,16 @@ public class Context : DbContext
 {
     public Context(DbContextOptions<Context> options) : base(options)
     {
-        this.ChangeTracker.LazyLoadingEnabled = true;
+        ChangeTracker.LazyLoadingEnabled = true;
     }
-    
+
     public DbSet<Car> Cars { get; set; }
     public DbSet<User> Users { get; set; }
-    
+
     public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; }
 
+    public DbSet<InsurancePolicy> InsurancePolicy { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Car>()
@@ -31,11 +33,17 @@ public class Context : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Car>()
+            .HasMany(i => i.InsurancePolicies)
+            .WithOne(c => c.Car)
+            .HasForeignKey(i => i.CarId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Car>()
             .Property(c => c.Price)
             .HasColumnType("decimal(18,2)");
 
         modelBuilder.Ignore<Notification>();
-        
+
         modelBuilder.Entity<MaintenanceRecord>()
             .Ignore(p => p.Car);
 
