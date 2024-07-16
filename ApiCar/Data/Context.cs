@@ -42,6 +42,10 @@ public class Context : DbContext
             .Property(c => c.Price)
             .HasColumnType("decimal(18,2)");
 
+        modelBuilder.Entity<InsurancePolicy>()
+            .Property(i => i.Premium)
+            .HasColumnType("decimal(18,2)");
+
         modelBuilder.Ignore<Notification>();
 
         modelBuilder.Entity<MaintenanceRecord>()
