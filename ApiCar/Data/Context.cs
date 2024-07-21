@@ -38,7 +38,7 @@ public class Context : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Car>()
-            .HasMany(m => m.CarMilesages)
+            .HasMany(m => m.CarMileages)
             .WithOne(c => c.Car)
             .HasForeignKey(m => m.CarId)
             .OnDelete(DeleteBehavior.Cascade);
