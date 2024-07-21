@@ -27,6 +27,46 @@ public class CarMileageController : ControllerBase
         return CreatedAtAction(nameof(GetCarMiles), new { id = carMileage.Id }, carMileage);
     }
 
+        [HttpPut("{id:int}")]
+    public async Task<ActionResult<CarMileage>> PutMileage(int id, CarMileage carMileage)
+    {
+        if (id <= 0) return BadRequest("Id inválido.");
+        if (carMileage is null) return BadRequest("Quilometragem nula.");
+
+        var findMileage = await _context.CarMilesages.FindAsync(id);
+        if (findMileage is null) return BadRequest("Quilometragem não encontrada.");
+
+        findMileage.Mileage = carMileage.Mileage;
+        findMileage.Date = carMileage.Date;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        
+        return NoContent();
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> DeleteMileage(int id)
+    {
+       if(id <=0) return BadRequest("Id inexistente.");
+
+       var mileage = await _context.CarMilesages.FindAsync(id);
+       if (mileage is null) return BadRequest("Quilometragem não encontrada.");
+       
+       _context.CarMilesages.Remove(mileage);
+       await _context.SaveChangesAsync();
+
+       return NoContent();
+    }
+    
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CarMileage>> GetCarMiles(int id)
     {
