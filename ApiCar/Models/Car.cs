@@ -14,19 +14,16 @@ public class Car : Notifiable
     public string? Make { get; set; }
     [Required] public string? Model { get; set; }
     [Required] public TransmissionType Transmission { get; set; }
-
     [Required]
     [Range(1800, 2025, ErrorMessage = "Intervalo inválido de ano.")]
     public int Year { get; set; }
-
     [Required] public decimal Price { get; set; }
     [Required] public int UserId { get; set; }
     public virtual User? Owner { get; set; }
 
     public virtual ICollection<MaintenanceRecord>? MaintenanceRecords { get; set; }
-
     public virtual ICollection<InsurancePolicy>? InsurancePolicies { get; set; }
-
+    public virtual ICollection<CarMileage>? CarMilesages { get; set; }
     [NotMapped] public new IReadOnlyCollection<Notification> Notifications => base.Notifications;
 
     public void Validate()

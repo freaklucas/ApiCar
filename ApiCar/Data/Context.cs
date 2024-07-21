@@ -13,10 +13,9 @@ public class Context : DbContext
 
     public DbSet<Car> Cars { get; set; }
     public DbSet<User> Users { get; set; }
-
     public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; }
-
     public DbSet<InsurancePolicy> InsurancePolicy { get; set; }
+    public DbSet<CarMileage> CarMilesages { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,6 +38,12 @@ public class Context : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Car>()
+            .HasMany(m => m.CarMilesages)
+            .WithOne(c => c.Car)
+            .HasForeignKey(m => m.CarId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Car>()
             .Property(c => c.Price)
             .HasColumnType("decimal(18,2)");
 
@@ -50,6 +55,8 @@ public class Context : DbContext
 
         modelBuilder.Entity<MaintenanceRecord>()
             .Ignore(p => p.Car);
+        
+        
 
         base.OnModelCreating(modelBuilder);
     }
