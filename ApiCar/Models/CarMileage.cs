@@ -9,5 +9,5 @@ public class CarMileage
     [Required] public int CarId { get; set; }
     [Required] public int Mileage { get; set; }
     [Required] public DateTime Date { get; set; }
-    [NotMapped] public virtual Car? Car { get; set; }
+    [ForeignKey("CarId")] public virtual Car? Car { get; set; }
 }

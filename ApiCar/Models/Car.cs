@@ -23,7 +23,7 @@ public class Car : Notifiable
 
     public virtual ICollection<MaintenanceRecord>? MaintenanceRecords { get; set; }
     public virtual ICollection<InsurancePolicy>? InsurancePolicies { get; set; }
-    public virtual ICollection<CarMileage>? CarMilesages { get; set; }
+    public virtual ICollection<CarMileage>? CarMileages { get; set; }
     [NotMapped] public new IReadOnlyCollection<Notification> Notifications => base.Notifications;
 
     public void Validate()
