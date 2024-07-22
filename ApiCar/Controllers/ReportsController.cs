@@ -83,4 +83,29 @@ public class ReportsController(Context context) : ControllerBase
         
         return Ok(report);
     }
+
+    [HttpGet("monthly-mileage/{carId:int}")]
+    public async Task<ActionResult<MonthlyMileageDto>> GetMonthlyMileage(int carId)
+    {
+        if(carId <= 0) return BadRequest("Id inválido.");
+        
+        var car = await _context
+            .Cars
+            .Include(c => c.CarMileages)
+            .FirstOrDefaultAsync(c => c.Id == carId);
+
+        if (car is null) return BadRequest("Carro não pode ser encontrado.");
+
+        var monthlyMileage = car.CarMileages
+            .GroupBy(m => new { m.Date.Year, m.Date.Month })
+            .Select(g => new MonthlyMileageDto
+            {
+                Year = g.Key.Year,
+                Month = g.Key.Month,
+                Mileage = g.Max(c => c.Mileage) - g.Min(c => c.Mileage) 
+            })
+            .ToList();
+        
+        return Ok(monthlyMileage);
+    }
 }
