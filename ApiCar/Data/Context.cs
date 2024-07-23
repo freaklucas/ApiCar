@@ -44,6 +44,12 @@ public class Context : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Car>()
+            .HasMany(m => m.FuelRecords)
+            .WithOne(m => m.Car)
+            .HasForeignKey(m => m.CarId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Car>()
             .Property(c => c.Price)
             .HasColumnType("decimal(18,2)");
 
