@@ -28,7 +28,7 @@ public class Car : Notifiable
     [NotMapped] public new IReadOnlyCollection<Notification> Notifications => base.Notifications;
 
     public void Validate()
-    {
+    {   
         if (string.IsNullOrEmpty(Make))
             AddNotification(nameof(Make), "A marca é obrigatório.");
 
