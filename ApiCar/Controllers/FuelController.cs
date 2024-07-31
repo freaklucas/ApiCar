@@ -9,6 +9,7 @@ namespace ApiCar.Controllers;
 [ApiController]
 public class FuelController(Context _context) : ControllerBase
 {
+    
     [HttpPost]
     public async Task<ActionResult<FuelRecord>> PostFuelRecord(FuelRecord fuelRecord)
     {
@@ -17,11 +18,11 @@ public class FuelController(Context _context) : ControllerBase
         _context.FuelRecords.Add(fuelRecord);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetFuelRecords), new { Id = fuelRecord.Id }, fuelRecord);
+        return CreatedAtAction(nameof(GetFuelRecord), new { id = fuelRecord.Id }, fuelRecord);
     }
 
     [HttpGet("{carId:int}")]
-    public async Task<ActionResult<IEnumerable<FuelRecord>>> GetFuelRecords(int carId)
+    public async Task<ActionResult<IEnumerable<FuelRecord>>> GetFuelRecord(int carId)
     {
         if (carId <= 0) return BadRequest("Não possível visualizar o registro.");
 
@@ -32,8 +33,8 @@ public class FuelController(Context _context) : ControllerBase
             .AsTracking()
             .ToListAsync();
 
-        if (!records.Any()) return BadRequest("Não possível visualizar o registro criado.");
-        
+        if (!records.Any()) return NotFound("Não há registros de combustível para este carro.");
+
         return Ok(records);
     }
 }
