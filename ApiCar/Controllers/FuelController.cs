@@ -37,4 +37,44 @@ public class FuelController(Context _context) : ControllerBase
 
         return Ok(records);
     }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<FuelRecord>> PutFuel(int id, FuelRecord fuelRecord)
+    {
+        if (id <= 0) return BadRequest("Não foi possível atender a solicitação.");
+        if (fuelRecord is null) return BadRequest("Entidade incompleta.");
+
+        var findFuel = await _context.FuelRecords.FindAsync(id);
+        if (findFuel is null) return NotFound("Registro não encontrado.");
+    
+        findFuel.Price = fuelRecord.Price;
+        findFuel.Date = fuelRecord.Date;
+        findFuel.Mileage = fuelRecord.Mileage;
+        findFuel.Quantity = fuelRecord.Quantity;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Não foi possível atender a solicitação {e.Message}");
+        }
+        
+        return NoContent();
+    }
+    
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> DeleteFuel(int id)
+    {
+        if (id <= 0) return BadRequest("Não foi possível atender a solicitação.");
+
+        var findFuel = await _context.FuelRecords.FindAsync(id);
+        if (findFuel is null) return NotFound("Registro não encontrado.");
+
+        _context.FuelRecords.Remove(findFuel);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }
