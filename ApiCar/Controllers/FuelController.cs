@@ -9,7 +9,6 @@ namespace ApiCar.Controllers;
 [ApiController]
 public class FuelController(Context _context) : ControllerBase
 {
-    
     [HttpPost]
     public async Task<ActionResult<FuelRecord>> PostFuelRecord(FuelRecord fuelRecord)
     {
@@ -18,11 +17,27 @@ public class FuelController(Context _context) : ControllerBase
         _context.FuelRecords.Add(fuelRecord);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetFuelRecord), new { id = fuelRecord.Id }, fuelRecord);
+        return CreatedAtAction(nameof(GetFuelRecordById), new { id = fuelRecord.Id }, fuelRecord);
     }
 
-    [HttpGet("{carId:int}")]
-    public async Task<ActionResult<IEnumerable<FuelRecord>>> GetFuelRecord(int carId)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<FuelRecord>> GetFuelRecordById(int id)
+    {
+        if (id <= 0) return BadRequest("Id inválido.");
+
+        var record = await _context
+            .FuelRecords
+            .Include(c => c.Car)
+            .AsTracking()
+            .FirstOrDefaultAsync(r => r.Id == id);
+
+        if (record == null) return NotFound("Registro não encontrado.");
+
+        return Ok(record);
+    }
+
+    [HttpGet("car/{carId:int}")]
+    public async Task<ActionResult<IEnumerable<FuelRecord>>> GetFuelRecords(int carId)
     {
         if (carId <= 0) return BadRequest("Não possível visualizar o registro.");
 
@@ -39,10 +54,11 @@ public class FuelController(Context _context) : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<FuelRecord>> PutFuel(int id, FuelRecord fuelRecord)
+    public async Task<ActionResult> PutFuel(int id, FuelRecord fuelRecord)
     {
         if (id <= 0) return BadRequest("Não foi possível atender a solicitação.");
         if (fuelRecord is null) return BadRequest("Entidade incompleta.");
+        if (id != fuelRecord.Id) return BadRequest("Entidade incompleta, ids diferem.");
 
         var findFuel = await _context.FuelRecords.FindAsync(id);
         if (findFuel is null) return NotFound("Registro não encontrado.");
