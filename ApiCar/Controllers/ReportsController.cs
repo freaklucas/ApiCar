@@ -108,4 +108,28 @@ public class ReportsController(Context context) : ControllerBase
         
         return Ok(monthlyMileage);
     }
+
+    [HttpGet("fuel-cost{carId:int}")]
+    public async Task<ActionResult<MonthlyFuelCostDto>> GetMonthlyFuelCosts(int carId)
+    {
+        if (carId <= 0) return BadRequest("Carro não pode ser encontrado.");
+        
+        var car = await _context
+            .Cars
+            .Include(c => c.FuelRecords)
+            .FirstOrDefaultAsync(c => c.Id == carId);
+
+        if (car is null) return NoContent();
+
+        var monthlyCosts = car.FuelRecords
+            .GroupBy(fr => new { fr.Date.Year, fr.Date.Month })
+            .Select(g => new MonthlyFuelCostDto
+            {
+                Year = g.Key.Year,
+                Month = g.Key.Month,
+                TotalCost = g.Sum(fr => fr.Price * fr.Quantity)
+            }).ToList();
+
+        return Ok(monthlyCosts);
+    }
 }
