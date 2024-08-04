@@ -132,4 +132,36 @@ public class ReportsController(Context context) : ControllerBase
 
         return Ok(monthlyCosts);
     }
+
+    [HttpGet("maintenance-details/{carId:int}")]
+    public async Task<ActionResult<MaintenanceSummaryDto>> GetMaintenanceDetails(int carId)
+    {
+        if (carId <= 0) return BadRequest("Id inválido.");
+
+        var car = await _context
+            .Cars
+            .AsNoTracking()
+            .Include(c => c.MaintenanceRecords)
+            .FirstOrDefaultAsync(p => p.Id == carId);
+
+        if (car is null) return NotFound();
+
+        var maintenanceDetails = car.MaintenanceRecords
+            .Select(m => new MaintenanceDetailDto
+            {
+                Description = m.Description,
+                Cost = m.Cost,
+                Date = m.Date
+            }).ToList();
+
+        var summary = new  MaintenanceSummaryDto
+        {
+            CarId = carId,
+            TotalCost = car.MaintenanceRecords.Sum(m => m.Cost),
+            AverageCost = car.MaintenanceRecords.Average(m => m.Cost),
+            MaintenanceDetails = maintenanceDetails
+        };
+        
+        return Ok(summary);
+    }
 }
