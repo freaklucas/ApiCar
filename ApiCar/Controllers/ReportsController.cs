@@ -164,4 +164,42 @@ public class ReportsController(Context context) : ControllerBase
         
         return Ok(summary);
     }
+
+    [HttpGet("fuel-efficiency/{carId}")]
+    public async Task<ActionResult<FuelEfficiencyDto>> GetFuelEfficiency(int carId)
+    {
+        if(carId <=0) return BadRequest("Id inválido.");
+
+        var car = await _context.Cars
+            .Include(c => c.CarMileages)
+            .Include(p => p.FuelRecords)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == carId);
+        
+        if(car is null) return NotFound();
+
+        if (!car.CarMileages.Any() || !car.FuelRecords.Any())
+        {
+            return BadRequest("Não há registros suficientes para calcular a eficiência de combustível.");
+        }
+
+        var totalFuelConsumed = car.FuelRecords.Sum(p => p.Quantity);
+        var totalDistanceTraveled = 
+            car.CarMileages.Max(m => m.Mileage) 
+                - 
+            car.CarMileages.Min(m => m.Mileage);
+        
+        var fuelEfficiency = totalDistanceTraveled / totalFuelConsumed;
+
+        var efficiencyDto = new FuelEfficiencyDto
+        {
+            CarId = carId,
+            CarModel = car.Model,
+            TotalFuelConsumed = totalFuelConsumed,
+            TotalDistanceTraveled = totalDistanceTraveled,
+            FuelEfficiency = fuelEfficiency
+        };
+
+        return Ok(efficiencyDto);
+    }
 }
