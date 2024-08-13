@@ -24,14 +24,15 @@ public class UserController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<User>> Get(int pageNumber = 1, int pageSize = 10)
     {
-        var users = _context.Users
+        IQueryable<User> query = _context.Users
             .Include(c => c.Cars)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
             .AsNoTracking()
-            .ToList();
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize);
+        
+        var users = query.ToList();
 
-        if (users is null) return BadRequest("Usuários não encontrados.");
+        if (users is null || !users.Any()) return BadRequest("Usuários não encontrados.");
 
         return Ok(users);
     }
