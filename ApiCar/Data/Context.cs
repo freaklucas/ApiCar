@@ -16,6 +16,7 @@ public class Context : DbContext
     public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; }
     public DbSet<InsurancePolicy> InsurancePolicy { get; set; }
     public DbSet<CarMileage> CarMilesages { get; set; }
+    public DbSet<ChangeLog> ChangeLogs { get; set; }
     
     public DbSet<FuelRecord> FuelRecords { get; set; }
     
