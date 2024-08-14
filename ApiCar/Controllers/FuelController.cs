@@ -85,12 +85,45 @@ public class FuelController(Context _context) : ControllerBase
     {
         if (id <= 0) return BadRequest("Não foi possível atender a solicitação.");
 
-        var findFuel = await _context.FuelRecords.FindAsync(id);
+        var findFuel = await _context
+            .FuelRecords
+            .Include(f => f.Car)
+            .FirstOrDefaultAsync(p => p.Id == id);
         if (findFuel is null) return NotFound("Registro não encontrado.");
 
+        // Registrar a remoção explícita no log
+        LogDeletion(findFuel, findFuel.Car?.Model);
+
         _context.FuelRecords.Remove(findFuel);
+    
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
+
+    private void LogDeletion<TEntity>(TEntity entity, string userName) where TEntity : class
+    {
+        var entry = _context.Entry(entity);
+
+        if (entity is null || userName is null) return;
+
+        foreach (var property in entry.OriginalValues.Properties)
+        {
+            var originalValue = entry.OriginalValues[property]?.ToString();
+            var log = new ChangeLog
+            {
+                EntityName = typeof(TEntity).Name,
+                EntityId = (int)entry.Property("Id").CurrentValue,
+                PropertyName = property.Name,
+                OldValue = originalValue,
+                NewValue = "DELETED",
+                ChangeDate = DateTime.Now,
+                UserName = userName
+            };
+            _context.ChangeLogs.Add(log);
+        }
+
+        _context.SaveChanges();
+    }
+
 }
