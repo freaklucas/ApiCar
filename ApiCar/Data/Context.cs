@@ -51,7 +51,13 @@ public class Context : DbContext
             .WithOne(m => m.Car)
             .HasForeignKey(m => m.CarId)
             .OnDelete(DeleteBehavior.Cascade);
-
+        
+        modelBuilder.Entity<CarListing>()
+            .HasOne(p => p.Car)
+            .WithMany(p => p.CarListings)
+            .HasForeignKey(p => p.CarId)
+            .OnDelete(DeleteBehavior.Cascade);  
+            
         modelBuilder.Entity<Car>()
             .Property(c => c.Price)
             .HasColumnType("decimal(18,2)");

@@ -25,6 +25,8 @@ public class Car : Notifiable
     public virtual ICollection<InsurancePolicy>? InsurancePolicies { get; set; }
     public virtual ICollection<CarMileage>? CarMileages { get; set; }
     public virtual ICollection<FuelRecord>? FuelRecords { get; set; }
+    
+    public virtual ICollection<CarListing>? CarListings { get; set; }
     [NotMapped] public new IReadOnlyCollection<Notification> Notifications => base.Notifications;
 
     public void Validate()
