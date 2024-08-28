@@ -16,6 +16,19 @@ public class CarListingController : ControllerBase
     {
         _context = context;
     }
+    
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CarListing>>> GetAllListings()
+    {
+        var listing = await _context
+            .CarListings
+            .AsTracking()
+            .ToListAsync();
+
+        if (!listing.Any()) return NoContent();
+        
+        return Ok(listing);
+    }
 
     [HttpGet("{carId:int}")]
     public async Task<ActionResult<IEnumerable<CarListing>>> GetListings(int carId)
@@ -23,6 +36,7 @@ public class CarListingController : ControllerBase
         var listing = await _context
             .CarListings
             .Where(c => c.CarId == carId)
+            .AsTracking()
             .ToListAsync();
 
         if (!listing.Any()) return NoContent();
@@ -33,11 +47,41 @@ public class CarListingController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CarListing>> PostCarListing(CarListing carListing)
     {
-        if(carListing is null) return NoContent();
+        if (carListing is null) return BadRequest("Dados inválidos.");
+    
+        var carExists = await _context.Cars.AnyAsync(c => c.Id == carListing.CarId);
+        if (!carExists) return BadRequest("Carro não encontrado.");
 
         _context.CarListings.Add(carListing);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetListings), new { carListing = carListing.CarId }, carListing);
+        return CreatedAtAction(nameof(GetListings), new { carListing.CarId }, carListing);
     }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<CarListing>> PutCarListing(int id, CarListing carListing)
+    {
+        if(id <= 0) return BadRequest("Id inválido.");
+        if(carListing is null) return BadRequest("Dados inválidos.");
+        if (id != carListing.Id) return BadRequest("Id inválido.");
+
+        var existing = await _context.CarListings.FindAsync(id);
+        if (existing is null) return NotFound("Anúncio não encontrado.");
+        
+        existing.Description = carListing.Description;
+        existing.Price = carListing.Price;
+        existing.ListingDate = carListing.ListingDate;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            return BadRequest($"Falha ao atualizar o anúncio: {e.Message}");
+        }
+
+        return NoContent();
+    }
+
 }
