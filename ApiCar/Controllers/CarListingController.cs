@@ -84,4 +84,46 @@ public class CarListingController : ControllerBase
         return NoContent();
     }
 
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> DeleteCarListing(int id)
+    {
+        if (id <= 0) return BadRequest("Não foi possível atender a solicitação.");
+
+        var findCarListing = await _context.CarListings
+            .Include(cl => cl.Car)
+            .FirstOrDefaultAsync(cl => cl.Id == id);
+
+        if (findCarListing is null) return NotFound("Anúncio não encontrado.");
+
+        LogDeletion(findCarListing, findCarListing?.Car?.Model);
+
+        _context.CarListings.Remove(findCarListing);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    private void LogDeletion<TEntity>(TEntity entity, string userName) where TEntity : class
+    {
+        var entry = _context.Entry(entity);
+
+        if (entity is null || userName is null) return;
+
+        foreach (var property in entry.OriginalValues.Properties)
+        {
+            var originalValue = entry.OriginalValues[property]?.ToString();
+            var log = new ChangeLog
+            {
+                EntityName = typeof(TEntity).Name,
+                EntityId = (int)entry.Property("Id").CurrentValue,
+                PropertyName = property.Name,
+                OldValue = originalValue,
+                NewValue = "DELETED",
+                ChangeDate = DateTime.Now,
+                UserName = userName
+            };
+            _context.ChangeLogs.Add(log);
+        }
+    }
+
 }
