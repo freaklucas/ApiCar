@@ -1,4 +1,5 @@
 using ApiCar.Data;
+using ApiCar.Dtos;
 using ApiCar.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -102,6 +103,31 @@ public class CarListingController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPost("Simulador-Financiamento")]
+    public ActionResult<LoanResultDto> SimulateLoan([FromBody] LoanSimulationDto simulation)
+    {
+        if (simulation is null) return BadRequest("Dados de simulação não fornecidos.");
+        var loanAmount = simulation.CarPrice - simulation.DownPayement;
+
+        if (loanAmount <= 0)
+            return BadRequest("Compre o carro a vista :)");
+        
+        var monthlyInterestRate = simulation.InterestRate / 12;
+        var numberOfPayments = simulation.Months;
+
+        var monthlyPayment = loanAmount * monthlyInterestRate / (1 - (decimal)Math.Pow((double)(1 + monthlyInterestRate), -numberOfPayments));
+        var totalPayment = monthlyPayment * numberOfPayments;
+
+        var result = new LoanResultDto
+        {
+            MonthlyAmount = Math.Round(monthlyPayment, 2),
+            TotalPayement = Math.Round(totalPayment, 2)
+        };
+
+        return Ok(result);
+    }
+
 
     private void LogDeletion<TEntity>(TEntity entity, string userName) where TEntity : class
     {
