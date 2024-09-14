@@ -10,4 +10,5 @@ public class CarListing
     [Required] public DateTime ListingDate { get; set; }
     public string? Description { get; set; }
     public virtual Car? Car { get; set; }
+    public virtual VehicleReport? VehicleReport { get; set; }
 }

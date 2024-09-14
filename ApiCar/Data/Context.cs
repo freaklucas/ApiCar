@@ -18,8 +18,8 @@ public class Context : DbContext
     public DbSet<CarMileage> CarMilesages { get; set; }
     public DbSet<ChangeLog> ChangeLogs { get; set; }
     public DbSet<FuelRecord> FuelRecords { get; set; }
-    
     public DbSet<CarListing> CarListings { get; set; }
+    public DbSet<VehicleReport> VehicleReports { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,8 +57,14 @@ public class Context : DbContext
             .HasOne(p => p.Car)
             .WithMany(p => p.CarListings)
             .HasForeignKey(p => p.CarId)
-            .OnDelete(DeleteBehavior.Cascade);  
-            
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<VehicleReport>()
+            .HasOne(v => v.CarListing)
+            .WithOne(c => c.VehicleReport)
+            .HasForeignKey<VehicleReport>(v => v.CarListingId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<Car>()
             .Property(c => c.Price)
             .HasColumnType("decimal(18,2)");
@@ -71,9 +77,7 @@ public class Context : DbContext
 
         modelBuilder.Entity<MaintenanceRecord>()
             .Ignore(p => p.Car);
-        
-        
-
+    
         base.OnModelCreating(modelBuilder);
     }
 }
