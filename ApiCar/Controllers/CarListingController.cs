@@ -58,7 +58,7 @@ public class CarListingController : ControllerBase
 
         return CreatedAtAction(nameof(GetListings), new { carListing.CarId }, carListing);
     }
-
+    
     [HttpPut("{id:int}")]
     public async Task<ActionResult<CarListing>> PutCarListing(int id, CarListing carListing)
     {

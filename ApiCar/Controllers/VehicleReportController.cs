@@ -37,7 +37,7 @@ public class VehicleReportController(Context context) : ControllerBase
 
         return CreatedAtAction("GetVehicleReport", new { id = vehicleReport.Id }, vehicleReport);
     }
-
+    
     [HttpPut("{id:int}")]
     public async Task<ActionResult<VehicleReport>> UpdateVehicleReport(int id, [FromBody] VehicleReport? vehicleReport)
     {

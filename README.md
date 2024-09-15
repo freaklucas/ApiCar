@@ -15,10 +15,15 @@ ApiCar/
 │
 ├── Controllers/
 │   ├── CarController.cs
-│   ├── UserController.cs
-│   ├── MaintenanceController.cs
+│   ├── CarListingController.cs
+│   ├── CarMileageController.cs
+│   ├── ChangeLogController.cs
+│   ├── FuelController.cs
 │   ├── InsurancePolicyController.cs
-│   └── ReportsController.cs
+│   ├── MaintenanceController.cs
+│   ├── ReportsController.cs
+│   ├── UserController.cs
+│   └── VehicleReportController.cs
 │
 ├── Data/
 │   ├── Context.cs
@@ -29,7 +34,8 @@ ApiCar/
 │   │   ├── User.cs
 │   │   ├── MaintenanceRecord.cs
 │   │   ├── InsurancePolicy.cs
-│   │   └── CarMileage.cs
+│   │   ├── CarMileage.cs
+│   │   └── VehicleReport.cs
 │   │
 │   ├── Enums/
 │   │   └── TransmissionType.cs
@@ -63,7 +69,8 @@ ApiCar/
 │   ├── UserDto.cs
 │   ├── MaintenanceRecordDto.cs
 │   ├── InsurancePolicyDto.cs
-│   └── YearlyCostDto.cs
+│   ├── YearlyCostDto.cs
+│   └── LoanSimulationDto.cs
 │
 ├── Migrations/
 │
@@ -75,5 +82,6 @@ ApiCar/
 ├── appsettings.Development.json
 ├── appsettings.json
 └── Program.cs
+
 
 ```
