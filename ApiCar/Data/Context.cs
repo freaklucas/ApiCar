@@ -21,6 +21,7 @@ public class Context : DbContext
     public DbSet<CarListing> CarListings { get; set; }
     public DbSet<VehicleReport> VehicleReports { get; set; }
     
+    public DbSet<Dealership> Dealerships { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Car>()
@@ -64,6 +65,12 @@ public class Context : DbContext
             .WithOne(c => c.VehicleReport)
             .HasForeignKey<VehicleReport>(v => v.CarListingId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Dealership>()
+            .HasMany(p => p.CarListings)
+            .WithOne(c => c.Dealership)
+            .HasForeignKey(p => p.DealershipId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Car>()
             .Property(c => c.Price)
