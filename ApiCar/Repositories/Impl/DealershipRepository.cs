@@ -32,7 +32,7 @@ public class DealershipRepository(Context context ) : IDealershipRepository
         return dealership;
     }
 
-    public async Task Add(Dealership dealership)
+    public async Task Create(Dealership dealership)
     {
         if(dealership == null) throw new ArgumentNullException(nameof(dealership), "Houve um erro ao tentar cadastrar.");
         
