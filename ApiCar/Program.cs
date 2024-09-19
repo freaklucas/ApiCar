@@ -1,4 +1,8 @@
 using ApiCar.Data;
+using ApiCar.Repositories.Impl;
+using ApiCar.Repositories.Interface;
+using ApiCar.Services.Impl;
+using ApiCar.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +15,9 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IDealershipRepository, DealershipRepository>();
+builder.Services.AddScoped<IDealershipService, DealershipService>();
 
 var app = builder.Build();
 
