@@ -20,8 +20,8 @@ public class Context : DbContext
     public DbSet<FuelRecord> FuelRecords { get; set; }
     public DbSet<CarListing> CarListings { get; set; }
     public DbSet<VehicleReport> VehicleReports { get; set; }
-    
     public DbSet<Dealership> Dealerships { get; set; }
+    public DbSet<TestDrive> TestDrives { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Car>()
@@ -70,6 +70,24 @@ public class Context : DbContext
             .HasMany(p => p.CarListings)
             .WithOne(c => c.Dealership)
             .HasForeignKey(p => p.DealershipId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<TestDrive>()
+            .HasOne(p => p.Car)
+            .WithMany(c => c.TestDrives)
+            .HasForeignKey(p => p.CarId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<TestDrive>()
+            .HasOne(u => u.User)
+            .WithMany(p => p.TestDrives)
+            .HasForeignKey(u => u.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<TestDrive>()
+            .HasOne(p => p.Dealership)
+            .WithMany(c => c.TestDrives)
+            .HasForeignKey(c => c.DealershipId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Car>()

@@ -11,4 +11,5 @@ public class Dealership
     [Required] public string? Contact { get; set; }
     
     public virtual ICollection<CarListing>? CarListings { get; set; }
+    public virtual ICollection<TestDrive>? TestDrives { get; set; }
 }

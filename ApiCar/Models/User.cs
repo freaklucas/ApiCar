@@ -20,4 +20,6 @@ public class User
     public string? Email { get; set; }
 
     public ICollection<Car>? Cars { get; set; } = new Collection<Car>();
+    
+    public virtual ICollection<TestDrive>? TestDrives { get; set; }
 }   
