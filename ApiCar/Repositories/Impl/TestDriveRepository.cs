@@ -17,7 +17,7 @@ public class TestDriveRepository(Context context) :ITestDriveRepository
             .Include(c => c.User)
             .Include(c => c.Dealership)
             .AsTracking()
-            .ToListAsync() ?? throw new InvalidOperationException("Nenhum test drive.");
+            .ToListAsync() ?? throw new InvalidOperationException("Nenhum test drive." );
 
         return testDrives;
     }
