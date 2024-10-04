@@ -19,6 +19,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IDealershipRepository, DealershipRepository>();
 builder.Services.AddScoped<IDealershipService, DealershipService>();
 
+builder.Services.AddScoped<ITestDriveRepository, TestDriveRepository>();
+builder.Services.AddScoped<ITestDriveService, TestDriveService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
