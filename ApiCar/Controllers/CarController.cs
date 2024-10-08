@@ -48,9 +48,12 @@ public class CarController : ControllerBase
 
     [HttpGet("BuscarPorFiltros")]
     public async Task<ActionResult<IEnumerable<Car>>> GetCarsByFilters
-        (decimal? minPrice, decimal? maxPrice, int? minYear, int? maxYear)
+        (decimal? minPrice, decimal? maxPrice, int? minYear, int? maxYear, int? minMileage, int? maxMileage, string? make)
     {
-        var query = _context.Cars.AsQueryable();
+        var query = _context.Cars
+            .Include(p => p.CarMileages)
+            .AsQueryable();
+        
         if(minPrice.HasValue)
         {
             query = query.Where(p => p.Price >= minPrice.Value);
@@ -68,6 +71,22 @@ public class CarController : ControllerBase
 
         if (maxYear.HasValue) { 
             query = query.Where(p=> p.Year <= maxYear.Value);
+        }
+
+        if (minMileage.HasValue)
+        {
+
+            query = query.Where(p => p.CarMileages.Sum(m => m.Mileage) <= minMileage.Value);
+        }
+
+        if (maxMileage.HasValue)
+        {
+            query = query.Where(p => p.CarMileages.Sum(m => m.Mileage) <= maxMileage.Value);
+        }
+
+        if (!string.IsNullOrEmpty(make))
+        {
+            query = query.Where(p => p.Make.ToLower().Contains(make.ToLower()));
         }
 
         var cars = await query.ToListAsync();
